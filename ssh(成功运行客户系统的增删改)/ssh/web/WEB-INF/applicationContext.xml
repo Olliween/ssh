@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <!--在spring容器中注册所有的bean-->
+    <!--配置SessionFactory-->
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource">
+            <ref bean="dataSource" ></ref>
+        </property>
+        <!--配置Hibernate的属性-->
+        <property name="hibernateProperties">
+            <props>
+                <!--配置数据库的方言-->
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+                <!--输出运行时生成SQL语句-->
+                <prop key="hibernate.show_sql">true</prop>
+            </props>
+        </property>
+        <!--指定Hibernate映射文件的路径-->
+        <property name="mappingResources">
+            <list>
+                <value>entity/Custom.hbm.xml</value>
+            </list>
+        </property>
+    </bean>
+    <!--配置打他source-->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <!--配置数据库JDBC驱动-->
+        <property name="driverClassName">
+            <value>com.mysql.jdbc.Driver</value>
+        </property>
+        <!--配置数据库连接URL-->
+        <property name="url" value="jdbc:mysql://localhost:3306/test"></property>
+        <!--配置数据库用户名-->
+        <property name="username">
+            <value>root</value>
+        </property>
+        <!--配置数据库密码-->
+        <property name="password">
+            <value>123456</value>
+        </property>
+    </bean>
+
+    <bean id="customDAO" class="dao.CustomDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>
+
+    <bean id="customService" class="service.CustomServiceImpl">
+        <property name="customDAO" ref="customDAO"></property>
+    </bean>
+
+    <bean id="loginAction" class="action.LoginAction">
+        <property name="customService" ref="customService"></property>
+    </bean>
+
+    <bean id="queryAction" class="action.QueryAction">
+        <property name="customService" ref="customService"></property>
+    </bean>
+
+    <bean id="addAction" class="action.AddAction">
+        <property name="customService" ref="customService"/>
+    </bean>
+
+    <bean id="deleteAction" class="action.DeleteAction">
+        <property name="customService" ref="customService"/>
+    </bean>
+
+    <bean id="updateAction" class="action.UpdateAction">
+        <property name="customService" ref="customService"/>
+    </bean>
+</beans>
